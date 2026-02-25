@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Just Kieran — Live</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400&family=Abril+Fatface&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:          #080810;
+      --bg2:         #0e0e1a;
+      --bg3:         #13132a;
+      --indigo:      #4a4a9e;
+      --indigo-mid:  #6b6bc4;
+      --indigo-glow: #8080e0;
+      --amber:       #d4843a;
+      --amber-dim:   #8a5523;
+      --cream:       #e8dfd0;
+      --muted:       #6b6580;
+      --rule:        #1e1e30;
+      --nav-h:       64px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--cream);
+      font-family: 'DM Mono', monospace;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    /* GRAIN */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.12;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes shimmer {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+    @keyframes pulse-ring {
+      0%   { transform: scale(1); opacity: 0.6; }
+      100% { transform: scale(2.4); opacity: 0; }
+    }
+    @keyframes marqueeScroll {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    @keyframes drawerIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 3rem;
+      z-index: 200;
+      background: linear-gradient(to bottom, rgba(8,8,16,0.97) 0%, transparent 100%);
+      transition: background 0.3s;
+    }
+
+    nav.scrolled {
+      background: rgba(8,8,16,0.97);
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .nav-logo {
+      font-family: 'Abril Fatface', serif;
+      font-size: 1.1rem;
+      color: var(--amber);
+      text-decoration: none;
+      letter-spacing: 0.03em;
+      flex-shrink: 0;
+    }
+
+    .nav-dot {
+      display: inline-block;
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--indigo-glow);
+      margin: 0 0.35em 0.1em;
+      vertical-align: middle;
+      animation: shimmer 2.5s ease-in-out infinite;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      transition: color 0.25s;
+    }
+
+    .nav-links a:hover { color: var(--cream); }
+
+    .nav-burger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      width: 36px; height: 36px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+      z-index: 201;
+    }
+
+    .nav-burger span {
+      display: block;
+      width: 100%;
+      height: 1.5px;
+      background: var(--cream);
+      border-radius: 2px;
+      transition: transform 0.3s ease, opacity 0.3s ease, width 0.3s ease;
+      transform-origin: center;
+    }
+
+    .nav-burger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .nav-burger.open span:nth-child(2) { opacity: 0; width: 0; }
+    .nav-burger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    .nav-drawer {
+      display: none;
+      position: fixed;
+      top: var(--nav-h);
+      left: 0; right: 0;
+      background: rgba(8,8,16,0.98);
+      border-bottom: 1px solid var(--rule);
+      padding: 2rem 1.5rem 2.5rem;
+      z-index: 199;
+      animation: drawerIn 0.25s ease forwards;
+    }
+
+    .nav-drawer.open { display: block; }
+    .nav-drawer ul { list-style: none; display: flex; flex-direction: column; gap: 0; }
+    .nav-drawer ul li { border-bottom: 1px solid var(--rule); }
+    .nav-drawer ul li:first-child { border-top: 1px solid var(--rule); }
+
+    .nav-drawer ul li a {
+      display: block;
+      padding: 1.1rem 0;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.78rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      transition: color 0.2s, padding-left 0.2s;
+    }
+
+    .nav-drawer ul li a:hover { color: var(--cream); padding-left: 0.5rem; }
+
+    .nav-drawer-footer { margin-top: 2rem; display: flex; gap: 1.5rem; }
+
+    .nav-drawer-footer a {
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-drawer-footer a:hover { color: var(--amber); }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: stretch;
+      padding: 0;
+      position: relative;
+      overflow: hidden;
+      gap: 0;
+    }
+
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 55% 55% at 75% 30%, rgba(74,74,158,0.28) 0%, transparent 65%),
+        radial-gradient(ellipse 40% 50% at 20% 70%, rgba(212,132,58,0.14) 0%, transparent 60%),
+        radial-gradient(ellipse 30% 30% at 50% 50%, rgba(128,128,224,0.06) 0%, transparent 60%);
+    }
+
+    .hero-lines { position: absolute; inset: 0; pointer-events: none; }
+
+    .hero-lines::before,
+    .hero-lines::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--indigo) 20%, var(--indigo-mid) 50%, var(--indigo) 80%, transparent);
+      opacity: 0.14;
+    }
+
+    .hero-lines::before { top: 38%; }
+    .hero-lines::after  { top: 62%; }
+
+    .hero-accent {
+      position: absolute;
+      top: 0; right: 8%;
+      width: 1px; height: 100vh;
+      background: linear-gradient(to bottom, transparent 0%, var(--indigo) 30%, var(--indigo-mid) 60%, transparent 100%);
+      opacity: 0.2;
+    }
+
+    .hero-left {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: calc(var(--nav-h) + 2rem) 3rem 5.5rem;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.68rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--indigo-glow);
+      margin-bottom: 1.4rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.2s forwards;
+    }
+
+    .hero-title {
+      font-family: 'Abril Fatface', serif;
+      font-size: clamp(3.2rem, 9vw, 8.5rem);
+      line-height: 0.9;
+      letter-spacing: -0.02em;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.4s forwards;
+    }
+
+    .hero-title .name { color: var(--amber); display: block; }
+
+    .hero-title .sub {
+      display: block;
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 0.52em;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      color: var(--indigo-glow);
+      margin-top: 0.3em;
+      line-height: 1.2;
+    }
+
+    .hero-desc {
+      margin-top: 1.8rem;
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      max-width: 40ch;
+      line-height: 1.85;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.65s forwards;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2.2rem;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.85s forwards;
+    }
+
+    .btn {
+      display: inline-block;
+      text-decoration: none;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 0.85rem 1.8rem;
+      border: 1px solid;
+      transition: background 0.25s, color 0.25s, border-color 0.25s;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn-primary { background: var(--amber); border-color: var(--amber); color: var(--bg); }
+    .btn-primary:hover { background: #e8963e; border-color: #e8963e; }
+    .btn-ghost { background: transparent; border-color: var(--indigo-mid); color: var(--indigo-glow); }
+    .btn-ghost:hover { background: rgba(74,74,158,0.15); border-color: var(--indigo-glow); }
+
+    .hero-right { position: relative; z-index: 2; overflow: hidden; }
+
+    .hero-portrait { position: relative; width: 100%; height: 100%; }
+
+    .hero-portrait-img,
+    .hero-portrait-placeholder {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+    }
+
+    .hero-portrait-placeholder {
+      background: var(--bg3);
+      background-image:
+        linear-gradient(160deg, rgba(74,74,158,0.25) 0%, transparent 55%),
+        linear-gradient(340deg, rgba(212,132,58,0.12) 0%, transparent 50%);
+    }
+
+    .hero-portrait::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(to right, var(--bg) 0%, transparent 35%);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .hero-portrait::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 25%;
+      background: linear-gradient(to top, var(--bg) 0%, transparent 100%);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    /* MARQUEE */
+    .marquee-wrap {
+      overflow: hidden;
+      border-top: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      padding: 0.9rem 0;
+      background: var(--bg2);
+    }
+
+    .marquee-track {
+      display: flex;
+      gap: 3rem;
+      white-space: nowrap;
+      animation: marqueeScroll 30s linear infinite;
+    }
+
+    .marquee-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.9rem;
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .mq-dot { color: var(--amber); font-size: 0.9rem; }
+
+    /* SECTIONS */
+    .section-outer { border-top: 1px solid var(--rule); }
+
+    section {
+      padding: 6rem 3rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1.5rem;
+      margin-bottom: 3.5rem;
+      flex-wrap: wrap;
+    }
+
+    .section-num {
+      font-size: 0.63rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--indigo-glow);
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 400;
+    }
+
+    .section-aside {
+      margin-left: auto;
+      font-size: 0.63rem;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+    }
+
+    /* VIDEO GRID */
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .video-card {
+      display: block;
+      position: relative;
+      background: var(--bg2);
+      border: 1px solid var(--rule);
+      overflow: hidden;
+      cursor: pointer;
+      aspect-ratio: 16/9;
+      text-decoration: none;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      padding: 0;
+      text-align: left;
+      font-family: inherit;
+    }
+
+    .video-card:hover {
+      border-color: var(--indigo);
+      box-shadow: 0 12px 40px rgba(74,74,158,0.25);
+    }
+
+    .video-thumb {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .video-thumb-placeholder {
+      width: 100%; height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg3);
+      background-image:
+        linear-gradient(135deg, rgba(74,74,158,0.15) 0%, transparent 60%),
+        linear-gradient(45deg, rgba(212,132,58,0.07) 0%, transparent 50%);
+    }
+
+    .play-icon {
+      width: 54px; height: 54px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.12);
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.25s, border-color 0.25s;
+    }
+
+    .video-card:hover .play-icon { background: rgba(74,74,158,0.35); border-color: var(--indigo-glow); }
+    .play-icon svg { width: 20px; height: 20px; fill: var(--cream); margin-left: 3px; }
+
+    .video-meta {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 1rem 1.2rem 1.1rem;
+      background: linear-gradient(to top, rgba(8,8,16,0.92) 0%, transparent 100%);
+    }
+
+    .video-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.98rem;
+      font-weight: 400;
+      color: var(--cream);
+      margin-bottom: 0.25rem;
+    }
+
+    .video-info {
+      font-size: 0.62rem;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .video-tag {
+      display: inline-block;
+      font-size: 0.58rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.15em 0.55em;
+      border: 1px solid var(--indigo);
+      color: var(--indigo-glow);
+    }
+
+    /* LIGHTBOX */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      align-items: center;
+      justify-content: center;
+      background: rgba(8,8,16,0.93);
+      backdrop-filter: blur(6px);
+      padding: 2rem;
+    }
+
+    .lightbox.open { display: flex; }
+
+    .lightbox-inner {
+      position: relative;
+      width: 100%;
+      max-width: 960px;
+    }
+
+    .lightbox-video {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%;
+      background: #000;
+      border: 1px solid var(--rule);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.7);
+    }
+
+    .lightbox-video iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: -2.8rem;
+      right: 0;
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: color 0.2s;
+      padding: 0;
+    }
+
+    .lightbox-close:hover { color: var(--cream); }
+    .lightbox-close svg { width: 14px; height: 14px; }
+
+    .lightbox-title {
+      margin-top: 1.2rem;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 400;
+      color: var(--cream);
+    }
+
+    .lightbox-meta {
+      margin-top: 0.3rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* PHOTO MASONRY */
+    .photo-masonry { columns: 3; column-gap: 1rem; }
+
+    .photo-item {
+      break-inside: avoid;
+      margin-bottom: 1rem;
+      overflow: hidden;
+      border: 1px solid var(--rule);
+      position: relative;
+      cursor: pointer;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .photo-item:hover { border-color: var(--indigo); box-shadow: 0 10px 35px rgba(226, 226, 229, 0.3); }
+    .photo-item img { width: 100%; display: block; }
+
+    .photo-placeholder {
+      width: 100%;
+      background: var(--bg3);
+      background-image:
+        linear-gradient(135deg, rgba(74,74,158,0.1) 0%, transparent 50%),
+        linear-gradient(225deg, rgba(212,132,58,0.07) 0%, transparent 50%);
+      display: block;
+    }
+
+    .photo-caption {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 0.85rem 1rem;
+      background: linear-gradient(to top, rgba(8,8,16,0.88) 0%, transparent 100%);
+      font-size: 0.66rem;
+      letter-spacing: 0.1em;
+      color: var(--cream);
+      transform: translateY(100%);
+      transition: transform 0.3s;
+    }
+
+    .photo-item:hover .photo-caption { transform: translateY(0); }
+
+    /* ABOUT */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 5rem;
+      align-items: start;
+    }
+
+    .about-portrait { position: relative; }
+
+    /* ── NEW: constrain the real portrait photo ── */
+    .about-portrait img {
+      width: 100%;
+      max-height: 520px;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+      border: 1px solid var(--rule);
+    }
+
+    .about-portrait-placeholder {
+      width: 100%;
+      aspect-ratio: 3/4;
+      background: var(--bg3);
+      background-image: linear-gradient(135deg, rgba(74,74,158,0.15) 0%, rgba(212,132,58,0.08) 100%);
+      border: 1px solid var(--rule);
+      display: block;
+    }
+
+    .about-portrait::after {
+      content: '';
+      position: absolute;
+      top: 10px; left: 10px; right: -10px; bottom: -10px;
+      border: 1px solid var(--indigo);
+      opacity: 0.35;
+      z-index: -1;
+    }
+
+    .about-text p {
+      font-size: 0.87rem;
+      line-height: 1.9;
+      color: var(--cream);
+      margin-bottom: 1.4rem;
+    }
+
+    .about-text p:last-child { margin-bottom: 0; }
+    .about-text strong { color: var(--amber); font-weight: 400; }
+
+    .about-tags { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 2rem; }
+
+    .tag {
+      font-size: 0.62rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 0.35em 0.9em;
+      border: 1px solid var(--rule);
+      color: var(--muted);
+      transition: border-color 0.25s, color 0.25s;
+    }
+
+    .tag:hover { border-color: var(--indigo-mid); color: var(--indigo-glow); }
+
+    .about-link {
+      color: var(--amber);
+      font-weight: 600;
+      text-decoration: none;
+      border-bottom: 1px solid var(--amber-dim);
+      transition: color 0.25s, border-color 0.25s;
+    }
+
+    .about-link:hover { color: #e8963e; border-color: #e8963e; }
+
+
+    /* CONTACT */
+    .contact-inner { max-width: 680px; }
+
+    .contact-inner p {
+      font-size: 0.82rem;
+      line-height: 1.85;
+      color: var(--muted);
+      margin-bottom: 2rem;
+    }
+
+    .contact-email {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.4rem, 3vw, 2.4rem);
+      font-style: italic;
+      color: var(--amber);
+      text-decoration: none;
+      border-bottom: 1px solid var(--amber-dim);
+      padding-bottom: 0.1em;
+      transition: color 0.25s, border-color 0.25s;
+      word-break: break-all;
+    }
+
+    .contact-email:hover { color: #e8963e; border-color: #e8963e; }
+
+    .contact-socials {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: 2.5rem;
+      flex-wrap: wrap;
+    }
+
+    .social-link {
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      padding-bottom: 0.1em;
+      transition: color 0.25s, border-color 0.25s;
+    }
+
+    .social-link:hover { color: var(--cream); border-color: var(--muted); }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--rule);
+      padding: 2.5rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-logo { font-family: 'Abril Fatface', serif; font-size: 1rem; color: var(--amber); }
+    .footer-copy { font-size: 0.63rem; letter-spacing: 0.12em; color: var(--muted); }
+
+    /* RESPONSIVE — tablet 900px */
+    @media (max-width: 900px) {
+      .photo-masonry { columns: 2; }
+    }
+
+    /* RESPONSIVE — mobile 768px */
+    @media (max-width: 768px) {
+      nav { padding: 0 1.25rem; }
+      .nav-links { display: none; }
+      .nav-burger { display: flex; }
+
+      .hero {
+        grid-template-columns: 1fr;
+        padding: 0;
+        gap: 0;
+        min-height: 92svh;
+      }
+
+      .hero-left { padding: calc(var(--nav-h) + 2rem) 1.25rem 4rem; }
+      .hero-right { display: none; }
+      .hero-accent { display: none; }
+      .hero-eyebrow { font-size: 0.62rem; margin-bottom: 1rem; }
+      .hero-title { font-size: clamp(2.8rem, 12vw, 5rem); }
+      .hero-desc { font-size: 0.75rem; margin-top: 1.4rem; max-width: 100%; }
+      .hero-ctas { margin-top: 2rem; gap: 0.8rem; }
+      .btn { padding: 0.8rem 1.4rem; font-size: 0.68rem; }
+
+      section { padding: 3.5rem 1.25rem; }
+      .section-header { margin-bottom: 2rem; }
+      .video-grid { grid-template-columns: 1fr; gap: 1rem; }
+      .photo-masonry { columns: 2; column-gap: 0.75rem; }
+      .photo-item { margin-bottom: 0.75rem; }
+      .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .about-portrait { max-width: 240px; }
+      .about-portrait::after { display: none; }
+      .about-text p { font-size: 0.83rem; }
+      footer { padding: 2rem 1.25rem; flex-direction: column; align-items: flex-start; }
+    }
+
+    /* RESPONSIVE — small phones 480px */
+    @media (max-width: 480px) {
+      .photo-masonry { columns: 1; }
+      .hero-title { font-size: clamp(2.6rem, 14vw, 3.8rem); }
+      .contact-email { font-size: 1.3rem; }
+      .hero-ctas { flex-direction: column; }
+      .btn { text-align: center; }
+      .marquee-item { font-size: 0.62rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="main-nav">
+    <a href="#" class="nav-logo">Just Kieran</a>
+    <ul class="nav-links">
+      <li><a href="#videos">Videos</a></li>
+      <li><a href="#photos">Photos</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <button class="nav-burger" id="burger" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Mobile drawer -->
+  <div class="nav-drawer" id="drawer" role="navigation" aria-label="Mobile menu">
+    <ul>
+      <li><a href="#videos"  class="drawer-link">Videos</a></li>
+      <li><a href="#photos"  class="drawer-link">Photos</a></li>
+      <li><a href="#about"   class="drawer-link">About</a></li>
+      <li><a href="#contact" class="drawer-link">Contact</a></li>
+    </ul>
+    <div class="nav-drawer-footer">
+      <a href="https://www.instagram.com/just_kieran_music/">Instagram</a>
+      <a href="https://www.youtube.com/@just_kieran_music/videos">YouTube</a>
+      <a href="https://open.spotify.com/artist/0kUv3XcH2y1rWYVMAysp1E?si=_WIWxOafSNu8SPu0JnKjJA">Spotify</a>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-lines"></div>
+    <div class="hero-accent"></div>
+
+    <div class="hero-left">
+      <p class="hero-eyebrow">Songs &amp; Stories</p>
+      <h1 class="hero-title">
+        Just<br>
+        <span class="name">Kieran</span>
+      </h1>
+      <p class="hero-desc">
+        Original songs, innovative covers, and soulful stories from the west coast of Ireland.
+      </p>
+      <div class="hero-ctas">
+        <a href="#videos"  class="btn btn-primary">Watch</a>
+        <a href="#contact" class="btn btn-ghost">Book a show</a>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="hero-portrait">
+        <img src='/Users/Kieran/Library/CloudStorage/GoogleDrive-thepitchprofessional@gmail.com/My Drive/Music/Visuals/Photos/blue-note-1/wetransfer_the-blue-note-sessions_2026-02-14_1031/TT1_5899.jpg' alt="Kieran performing" class="hero-portrait-img">
+      </div>
+    </div>
+  </header>
+
+  <!-- MARQUEE -->
+  <div class="marquee-wrap" aria-hidden="true">
+    <div class="marquee-track">
+      <span class="marquee-item"><span class="mq-dot">&#9833;</span> Folk</span>
+      <span class="marquee-item"><span class="mq-dot">&#9670;</span> Blues</span>
+      <span class="marquee-item"><span class="mq-dot">&#9833;</span> Sound Archives</span>
+      <span class="marquee-item"><span class="mq-dot">&#9833;</span> Original Songwriting</span>
+      <span class="marquee-item"><span class="mq-dot">&#9670;</span> Folk</span>
+      <span class="marquee-item"><span class="mq-dot">&#9833;</span> Blues</span>
+      <span class="marquee-item"><span class="mq-dot">&#9670;</span> Sound Archives</span>
+      <span class="marquee-item"><span class="mq-dot">&#9833;</span> Original Songwriting</span>
+      <span class="marquee-item"><span class="mq-dot">&#9833;</span> Folk</span>
+      <span class="marquee-item"><span class="mq-dot">&#9670;</span> Blues</span>
+      <span class="marquee-item"><span class="mq-dot">&#9833;</span> Sound Archives</span>
+      <span class="marquee-item"><span class="mq-dot">&#9833;</span> Original Songwriting</span>
+      <span class="marquee-item"><span class="mq-dot">&#9833;</span> Folk</span>
+      <span class="marquee-item"><span class="mq-dot">&#9670;</span> Blues</span>
+      <span class="marquee-item"><span class="mq-dot">&#9833;</span> Sound Archives</span>
+      <span class="marquee-item"><span class="mq-dot">&#9833;</span> Original Songwriting</span>
+    </div>
+  </div>
+
+  <!-- VIDEOS -->
+  <div class="section-outer">
+    <section id="videos">
+      <div class="section-header">
+        <span class="section-num">01</span>
+        <h2 class="section-title">Live Videos</h2>
+        <span class="section-aside">4 clips</span>
+      </div>
+      <div class="video-grid">
+
+        <button class="video-card" data-video-id="hvxMEwdVWPk" data-title="Blue Note Session #1" data-meta="Ennistymon, Feb. '25 · Blues">
+          <img src="https://img.youtube.com/vi/hvxMEwdVWPk/maxresdefault.jpg" alt="Blue Note Session #1" class="video-thumb">
+          <div class="video-meta">
+            <div class="video-title">Blue Note Session #1, First Name: Inspiration, Surname: Lost and Found</div>
+            <div class="video-info">Ennistymon, Feb. '25 <span class="video-tag">Blues</span></div>
+          </div>
+        </button>
+
+        <button class="video-card" data-video-id="2-mVou5_9YY" data-title="Live at Kenny's, Aug '25" data-meta="Live at Kenny's, Aug '25">
+          <img src="https://img.youtube.com/vi/2-mVou5_9YY/maxresdefault.jpg" alt="Live at Kenny's, Aug '25" class="video-thumb">
+          <div class="video-meta">
+            <div class="video-title">Live at Kenny's, Aug '25</div>
+            <div class="video-info">Live at Kenny's, Aug '25 <span class="video-tag">Live</span></div>
+          </div>
+        </button>
+
+        <button class="video-card" data-video-id="ZkDpmg7dItE" data-title="The High Reel" data-meta="Electric Picnic, 2025">
+          <img src="https://img.youtube.com/vi/ZkDpmg7dItE/maxresdefault.jpg" alt="The High Reel" class="video-thumb">
+          <div class="video-meta">
+            <div class="video-title">The High Reel</div>
+            <div class="video-info">Aindrias de Staic and The Latchikos <span class="video-tag">Folk</span></div>
+          </div>
+        </button>
+
+        <button class="video-card" data-video-id="RbmtSKXOz2Y" data-title="Blue Note Session #1" data-meta="Ennistymon, Feb. '25 · Blues">
+          <img src="https://img.youtube.com/vi/RbmtSKXOz2Y/maxresdefault.jpg" alt="Blue Note Session #1" class="video-thumb">
+          <div class="video-meta">
+            <div class="video-title">Blue Note Session #1, Lose Control</div>
+            <div class="video-info">Ennistymon, Feb. '25 <span class="video-tag">Blues</span></div>
+          </div>
+        </button>
+
+      </div>
+    </section>
+  </div>
+
+  <!-- PHOTOS -->
+  <div class="section-outer">
+    <section id="photos">
+      <div class="section-header">
+        <span class="section-num">02</span>
+        <h2 class="section-title">Performance Photos</h2>
+        <span class="section-aside">Gallery</span>
+      </div>
+      <div class="photo-masonry">
+        <div class="photo-item">
+          <img src="/Users/Kieran/Library/CloudStorage/GoogleDrive-thepitchprofessional@gmail.com/My Drive/Music/Visuals/Photos/blue-note-1/wetransfer_the-blue-note-sessions_2026-02-14_1031/TT1_5907.jpg" alt="Blue Note Sessions, Ennistymon - Feb. '26">
+          <div class="photo-caption">Blue Note Sessions, Ennistymon - Feb. '26</div>
+        </div>
+        <div class="photo-item">
+          <img src="/Users/Kieran/Library/CloudStorage/GoogleDrive-thepitchprofessional@gmail.com/My Drive/Music/Visuals/Photos/blue-note-1/wetransfer_the-blue-note-sessions_2026-02-14_1031/TT1_6320.jpg" alt="Blue Note Sessions, Ennistymon - Feb. '26">
+          <div class="photo-caption">Blue Note Sessions, Ennistymon - Feb. '26</div>
+        </div>
+        <div class="photo-item">
+          <img src="/Users/Kieran/Library/CloudStorage/GoogleDrive-thepitchprofessional@gmail.com/My Drive/Music/Visuals/Photos/Kilfenora_July25.JPG" alt="Kilfenora, Co. Clare - July '25">
+          <div class="photo-caption">Kilfenora, Co. Clare - July '25</div>
+        </div>
+        <div class="photo-item">
+          <img src="/Users/Kieran/Library/CloudStorage/GoogleDrive-thepitchprofessional@gmail.com/My Drive/Music/Visuals/Photos/blue-note-1/wetransfer_the-blue-note-sessions_2026-02-14_1031/TT1_6375.jpg" alt="Blue Note Sessions, Ennistymon - Feb. '26">
+          <div class="photo-caption">Blue Note Sessions, Ennistymon - Feb. '26</div>
+        </div>
+        <div class="photo-item">
+          <img src="/Users/Kieran/Library/CloudStorage/GoogleDrive-thepitchprofessional@gmail.com/My Drive/Music/Visuals/Photos/blue-note-1/wetransfer_the-blue-note-sessions_2026-02-14_1031/TT1_6367.jpg" alt="Blue Note Sessions, Ennistymon - Feb. '26">
+          <div class="photo-caption">Blue Note Sessions, Ennistymon - Feb. '26</div>
+        </div>
+        <div class="photo-item">
+          <img src="/Users/Kieran/Library/CloudStorage/GoogleDrive-thepitchprofessional@gmail.com/My Drive/Music/Visuals/Photos/blue-note-1/wetransfer_the-blue-note-sessions_2026-02-14_1031/TT1_6004.jpg" alt="Blue Note Sessions, Ennistymon - Feb. '26">
+          <div class="photo-caption">Blue Note Sessions, Ennistymon - Feb. '26</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ABOUT -->
+  <div class="section-outer">
+    <section id="about">
+      <div class="section-header">
+        <span class="section-num">03</span>
+        <h2 class="section-title">About</h2>
+      </div>
+      <div class="about-grid">
+        <div class="about-portrait">
+          <img src="/Users/Kieran/Library/CloudStorage/GoogleDrive-thepitchprofessional@gmail.com/My Drive/Music/Visuals/Photos/IMG_9473.jpg">
+        </div>
+        <div class="about-text">
+          <p>
+            <strong>Just Kieran</strong> is a singer-songwriter and multi-instrumentalist from County Clare, Ireland, but with roots in London, England. His live sets weave together curated audio from sound archives, original compositions, traditional Irish folk, and vocals that are heavily influenced by the blues and soul.
+          </p>
+
+          <p>
+            As a solo artist, he has released two singles to date: <a href="https://open.spotify.com/track/1HeUqZih8T8rtYw1dUkolg?si=85a82125c7fe447a" target="_blank" class="about-link">Bedtime</a> and <a href="https://open.spotify.com/track/2gO9uz0y0oJCSPxeLjIsXE?si=86f397107b074506" target="_blank" class="about-link">If This Is A Man</a>. He is currently working on his debut album, titled <strong>Sassanach</strong>. In his late teens, he was a member of the group <strong>Fionnuar</strong>, the winners of Gael Linn's <i>Siansa</i> competition for young traditional musicians. This garnered the group airtime on RTE radio and television, as well as a performance at Ireland's National Concert Hall. In the years since he has performed at internationally significant music festivals, such as Electric Picnic.
+          </p>
+  
+          <p>
+            2026 has seen him launch <strong>The Blue Note Sessions</strong>, a live events series that brings the best songwriting talent from Ireland's rich live music scene to small venues along the west coast. The first Blue Note took place in <strong>Pot Duggan's, Ennistymon</strong> in February 2026, and saw Just Kieran take to the stage alongside <strong>Brian O'Brien</strong> and <strong>Barry Murphy</strong> of <strong>Hermitage Green</strong>.
+          </p>
+
+          <p>
+            Before beginning his musical career in earnest in 2024, he completed a doctorate in social history at the University of Oxford. This interest in the past now influences his performances and songwriting, particularly by incorporating live footage of sound archives into his set. The effect is to immerse audiences into a particular place and time, and root his performances in soundscapes and histories that are both entertaining and thought-provoking.
+          </p>
+          <div class="about-tags">
+            <span class="tag">Original songs</span>
+            <span class="tag">Blues & Soul</span>
+            <span class="tag">Folk</span>
+            <span class="tag">Soulful Stories</span>
+            <span class="tag">Sassanach</span>
+            <span class="tag">Blue Note Sessions</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="section-outer">
+    <section id="contact">
+      <div class="section-header">
+        <span class="section-num">04</span>
+        <h2 class="section-title">Get in touch</h2>
+      </div>
+      <div class="contact-inner">
+        <p>
+          Available for gigs, sessions, and collaborations across the west of Ireland
+          and beyond. Say hello below!
+        </p>
+        <a href="mailto:justkieran.music@gmail.com" class="contact-email">justkieran.music@gmail.com</a>
+        <div class="contact-socials">
+          <a href="https://www.instagram.com/just_kieran_music/" target="_blank" class="social-link">Instagram</a>
+          <a href="https://www.youtube.com/@just_kieran_music/videos" target="_blank" class="social-link">YouTube</a>
+          <a href="https://open.spotify.com/artist/0kUv3XcH2y1rWYVMAysp1E?si=_WIWxOafSNu8SPu0JnKjJA" target="_blank" class="social-link">Spotify</a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Video player">
+    <div class="lightbox-inner">
+      <button class="lightbox-close" id="lightbox-close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+        Close
+      </button>
+      <div class="lightbox-video">
+        <iframe id="lightbox-iframe" src="" allow="autoplay; encrypted-media" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+      </div>
+      <div class="lightbox-title" id="lightbox-title"></div>
+      <div class="lightbox-meta" id="lightbox-meta"></div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">Just Kieran</div>
+    <div class="footer-copy">&copy; <span id="yr"></span> Just Kieran &mdash; West Clare, Ireland</div>
+  </footer>
+
+  <script>
+    document.getElementById('yr').textContent = new Date().getFullYear();
+
+    const nav = document.getElementById('main-nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+
+    const burger = document.getElementById('burger');
+    const drawer = document.getElementById('drawer');
+
+    burger.addEventListener('click', () => {
+      const open = drawer.classList.toggle('open');
+      burger.classList.toggle('open', open);
+      burger.setAttribute('aria-expanded', open);
+      document.body.style.overflow = open ? 'hidden' : '';
+    });
+
+    document.querySelectorAll('.drawer-link').forEach(link => {
+      link.addEventListener('click', () => {
+        drawer.classList.remove('open');
+        burger.classList.remove('open');
+        burger.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      });
+    });
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll('.video-card, .photo-item').forEach((el, i) => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(18px)';
+      el.style.transitionDelay = `${i * 0.06}s`;
+      el.style.transition = 'opacity 0.55s ease, transform 0.55s ease, border-color 0.3s, box-shadow 0.3s';
+      observer.observe(el);
+    });
+
+    const lightbox = document.getElementById('lightbox');
+    const lbIframe = document.getElementById('lightbox-iframe');
+    const lbTitle  = document.getElementById('lightbox-title');
+    const lbMeta   = document.getElementById('lightbox-meta');
+    const lbClose  = document.getElementById('lightbox-close');
+
+    function openLightbox(videoId, title, meta) {
+      lbIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+      lbTitle.textContent = title;
+      lbMeta.textContent  = meta;
+      lightbox.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove('open');
+      lbIframe.src = '';
+      document.body.style.overflow = '';
+    }
+
+    document.querySelectorAll('.video-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const id = card.dataset.videoId;
+        if (id && !id.startsWith('YOUR_VIDEO_ID')) {
+          openLightbox(id, card.dataset.title, card.dataset.meta);
+        }
+      });
+    });
+
+    lbClose.addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+  </script>
+</body>
+</html>
