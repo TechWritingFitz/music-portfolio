@@ -824,6 +824,12 @@
 
     /* RESPONSIVE — mobile 768px */
     @media (max-width: 768px) {
+        .hero-desc {
+          background: rgba(6,8,15,0.6);
+          padding: 0.8rem 1rem;
+          backdrop-filter: blur(4px);
+        }
+      }
       nav { padding: 0 1.25rem; }
       .nav-links { display: none; }
       .nav-burger { display: flex; }
@@ -837,6 +843,27 @@
       .hero-left { padding: calc(var(--nav-h) + 2rem) 1.25rem 4rem; }
       .hero-right { display: none; }
       .hero-accent { display: none; }
+
+        .hero {
+          background-image: url('./images/TT1_5899.jpg');
+          background-size: cover;
+          background-position: center top;
+        }
+
+        .hero::after {
+          content: '';
+          position: absolute; inset: 0;
+          background: linear-gradient(
+            to bottom,
+            rgba(6,8,15,0.55) 0%,
+            rgba(6,8,15,0.45) 40%,
+            rgba(6,8,15,0.75) 75%,
+            rgba(6,8,15,0.97) 100%
+          );
+          z-index: 1;
+        }
+
+.hero-left { z-index: 2; }
       .hero-eyebrow { font-size: 0.62rem; margin-bottom: 1rem; }
       .hero-title { font-size: clamp(2.8rem, 12vw, 5rem); }
       .hero-desc { font-size: 1rem; margin-top: 1.4rem; max-width: 100%; }
@@ -854,7 +881,7 @@
       .about-text p { font-size: 0.83rem; }
       .listen-grid { grid-template-columns: 1fr; }
       footer { padding: 2rem 1.25rem; flex-direction: column; align-items: flex-start; }
-    }
+    
 
     /* RESPONSIVE — small phones 480px */
     @media (max-width: 480px) {
@@ -1120,7 +1147,7 @@
             <strong>Just Kieran</strong> is a singer-songwriter and multi-instrumentalist from County Clare, Ireland, but with roots in London, England. His live sets weave together curated audio from sound archives, original compositions, traditional Irish folk, and vocals that are heavily influenced by the blues and soul.
           </p>
           <p>
-            As a solo artist, he has released two singles to date: <a href="https://open.spotify.com/track/1HeUqZih8T8rtYw1dUkolg?si=85a82125c7fe447a" target="_blank" class="about-link">Bedtime</a> and <a href="https://open.spotify.com/track/2gO9uz0y0oJCSPxeLjIsXE?si=86f397107b074506" target="_blank" class="about-link">If This Is A Man</a>. He is currently working on his debut album, titled <strong>Sassanach</strong>. In his late teens, he was a member of the group <strong>Fionnuar</strong>, the winners of Gael Linn's <i>Siansa</i> competition for young traditional musicians. This garnered the group airtime on RTE radio and television, as well as a performance at Ireland's National Concert Hall. In the years since he has performed at internationally significant music festivals, such as Electric Picnic.
+            As a solo artist, he has released two singles to date: <a href="https://open.spotify.com/track/1HeUqZih8T8rtYw1dUkolg?si=85a82125c7fe447a" target="_blank" class="about-link">Bedtime</a> and <a href="https://open.spotify.com/track/2gO9uz0y0oJCSPxeLjIsXE?si=86f397107b074506" target="_blank" class="about-link">If This Is A Man</a>. He is currently working on his debut EP, titled <strong>Sassanach</strong>. In his late teens, he was a member of the group <strong>Fionnuar</strong>, the winners of Gael Linn's <i>Siansa</i> competition for young traditional musicians. This garnered the group airtime on RTE radio and television, as well as a performance at Ireland's National Concert Hall. In the years since he has performed at internationally significant music festivals, such as Electric Picnic.
           </p>
           <p>
             2026 has seen him launch <strong>The Blue Note Sessions</strong>, a live events series that brings the best songwriting talent from Ireland's rich live music scene to small venues along the west coast. The first Blue Note took place in <strong>Pot Duggan's, Ennistymon</strong> in February 2026, and saw Just Kieran take to the stage alongside <strong>Brian O'Brien</strong> and <strong>Barry Murphy</strong> of <strong>Hermitage Green</strong>.
