@@ -198,8 +198,9 @@
     .hero {
       min-height: 100vh;
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      align-items: stretch;
+      grid-template-columns: 1.2fr 0.8fr;
+      align-items: center;
+      max-width: 1600px;
       padding: 0;
       position: relative;
       overflow: hidden;
@@ -319,7 +320,7 @@
     .btn-ghost { background: transparent; border-color: var(--prussian-mid); color: var(--prussian-glow); }
     .btn-ghost:hover { background: rgba(0,49,83,0.2); border-color: var(--prussian-glow); }
 
-    .hero-right { position: relative; z-index: 2; overflow: hidden; }
+    .hero-right { position: relative; z-index: 2; overflow: hidden; height: 80vh; max-height: 800px; border: 1px solid var(--rule)}
     .hero-portrait { position: relative; width: 100%; height: 100%; }
 
     .hero-portrait-img {
@@ -416,8 +417,8 @@
     /* VIDEO GRID */
     .video-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1.25rem;
+      grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+      gap: 2rem;
     }
 
     .video-card {
@@ -705,8 +706,8 @@
 
     .about-portrait img {
       width: 100%;
-      height: 100%;
-      max-height: none;
+      height: auto;
+      max-height: 70vh;
       object-fit: cover;
       object-position: center 15%;
       position: sticky;
@@ -884,14 +885,46 @@
     
 
     /* RESPONSIVE — small phones 480px */
-    @media (max-width: 480px) {
-      .photo-masonry { columns: 1; }
-      .hero-title { font-size: clamp(2.6rem, 14vw, 3.8rem); }
-      .contact-email { font-size: 1.3rem; }
-      .hero-ctas { flex-direction: column; }
-      .btn { text-align: center; }
-      .marquee-item { font-size: 0.62rem; }
-    }
+    @media (max-width: 768px) {
+  nav { padding: 0 1.25rem; }
+  .nav-links { display: none; }
+  .nav-burger { display: flex; }
+
+  .hero {
+    grid-template-columns: 1fr;
+    padding: 0;
+    min-height: 92svh;
+    background-image: url('./images/TT1_5899.jpg');
+    background-size: cover;
+    background-position: center top;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(6,8,15,0.5) 0%, rgba(6,8,15,0.95) 100%);
+    z-index: 1;
+  }
+
+  .hero-left { 
+    z-index: 2; 
+    padding: calc(var(--nav-h) + 2rem) 1.5rem 4rem;
+    justify-content: center;
+  }
+  
+  .hero-right, .hero-accent { display: none; }
+  
+  .hero-desc {
+    background: rgba(6,8,15,0.6);
+    padding: 1rem;
+    backdrop-filter: blur(4px);
+    font-size: 1rem;
+    max-width: 100%;
+  }
+
+  .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+  .photo-masonry { columns: 2; }
+}
   </style>
 </head>
 <body>
